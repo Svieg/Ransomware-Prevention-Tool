@@ -24,7 +24,13 @@ for proc in psutil.process_iter():
 
 print(processes)
 
-processes = {"notepad.exe": 0, "ServerManager.exe": 0}
+processes = {"notepad.exe": processes["notepad.exe"], "steam.exe": processes["CmWebAdmin.exe"]}
+
+processes_pids = ",".join("{}:{}".format(processes[proc_name], proc_name) for proc_name in processes.keys())
+
+with open("out.log", "w") as out_file:
+    out_file.write(processes_pids + "\n")
+
 sessions = []
 
 for process in processes:
@@ -50,7 +56,6 @@ monitored_reg_ranks = json.loads(monitored_reg_ranks_file_content)
 env = Environment(loader=FileSystemLoader("./"))
 template = env.get_template("instrument.js")
 instrument_js = template.render({"function_names": monitored_apis_ranks.keys()})
-print(instrument_js)
 for session in sessions:
     script = session.create_script(instrument_js)
     script.on("message", on_message)
