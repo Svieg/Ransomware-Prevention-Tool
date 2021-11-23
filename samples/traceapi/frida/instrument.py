@@ -2,7 +2,7 @@ import frida
 import json
 import psutil
 import sys
-
+from jinja2 import Environment, FileSystemLoader
 
 def on_message(message, data):
     print("[on_message] message:", message, "data:", data)
@@ -35,24 +35,28 @@ for process in processes:
     print(f"Can't attach to process: {process}")
     continue
 
-for session in sessions:
-    with open("instrument.js") as instrument_js_file:
-        instrument_js_file_content = instrument_js_file.read()
+# TODO: create load_json_file function
+# Load monitored APIs
+with open("monitored_apis_ranks.json") as monitored_apis_ranks_file:
+    monitored_apis_ranks_file_content = monitored_apis_ranks_file.read()
+monitored_apis_ranks = json.loads(monitored_apis_ranks_file_content)
 
-    script = session.create_script(instrument_js_file_content)
+# Load monitored registry keys
+with open("monitored_reg_ranks.json") as monitored_reg_ranks_file:
+    monitored_reg_ranks_file_content = monitored_reg_ranks_file.read()
+monitored_reg_ranks = json.loads(monitored_reg_ranks_file_content)
+
+# Render instrument.js template from file with monitored_apis_ranks functions hooked
+env = Environment(loader=FileSystemLoader("./"))
+template = env.get_template("instrument.js")
+instrument_js = template.render({"function_names": monitored_apis_ranks.keys()})
+print(instrument_js)
+for session in sessions:
+    script = session.create_script(instrument_js)
     script.on("message", on_message)
     script.load()
 
     imported_apis = [m["name"] for m in script.exports.enumerate_modules()]
-
-    # TODO: create load_json_file function
-    with open("monitored_apis_ranks.json") as monitored_apis_ranks_file:
-        monitored_apis_ranks_file_content = monitored_apis_ranks_file.read()
-    monitored_apis_ranks = json.loads(monitored_apis_ranks_file_content)
-
-    with open("monitored_reg_ranks.json") as monitored_reg_ranks_file:
-        monitored_reg_ranks_file_content = monitored_reg_ranks_file.read()
-    monitored_reg_ranks = json.loads(monitored_reg_ranks_file_content)
 
     threshold = 0
 

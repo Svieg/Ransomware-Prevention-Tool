@@ -31,74 +31,10 @@ rpc.exports.enumerateModules = function () {
 };
 var i;
 
-// TODO: template
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
+{% for function_name in function_names %}
+Interceptor.attach(Module.getExportByName("kernel32.dll", "{{ function_name }}"), {
   onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
+    send("{{ function_name }}:" + Process.id.toString());
   },
 });
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExW"), {
-  onEnter(args) {
-    send("RegCreateKeyExW:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegSetValueExW"), {
-  onEnter(args) {
-    send("RegSetValueExW:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegSetValueExA"), {
-  onEnter(args) {
-    send("RegSetValueExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegOpenKeyExA"), {
-  onEnter(args) {
-    send("RegOpenKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegOpenKeyExA"), {
-  onEnter(args) {
-    send("RegOpenKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegQueryInfoKeyA"), {
-  onEnter(args) {
-    send("RegQueryInfoKeyA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegQueryInfoKeyA"), {
-  onEnter(args) {
-    send("RegQueryInfoKeyW:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
-Interceptor.attach(Module.getExportByName("kernel32.dll", "RegCreateKeyExA"), {
-  onEnter(args) {
-    send("RegCreateKeyExA:" + Process.id.toString());
-  },
-});
+{% endfor %}
